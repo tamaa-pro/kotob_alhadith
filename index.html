@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ar">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>الأحاديث النبوية</title>
@@ -66,22 +67,29 @@
 </head>
 <body>
   <h1>الأحاديث النبوية</h1>
+
   <select id="bookSelector">
     <option value="">اختر كتابًا</option>
-    <option value="ara-bukhari">صحيح البخاري</option>
-    <option value="ara-muslim">صحيح مسلم</option>
-    <option value="ara-tirmidzi">سنن الترمذي</option>
-    <option value="ara-abu-daud">سنن أبي داود</option>
-    <option value="ara-nasai">سنن النسائي</option>
-    <option value="ara-ibnu-majah">سنن ابن ماجه</option>
-  </select>  <div class="loading" id="loading" style="display:none">
+    <option value="albukhari">صحيح البخاري</option>
+    <option value="muslim">صحيح مسلم</option>
+    <option value="abudawud">سنن أبي داود</option>
+    <option value="nasai">سنن النسائي</option>
+    <option value="ibnmajah">سنن ابن ماجه</option>
+    <option value="malik">موطأ مالك</option>
+  </select>
+
+  <div class="loading" id="loading" style="display:none">
     <p>📖 جاري تحميل الأحاديث فصبرٌ جميل...</p>
-  </div>  <div id="results"></div>
+  </div>
+
+  <div id="results"></div>
   <div class="pagination" id="pagination" style="display:none">
     <button onclick="prevPage()">السابق</button>
     <span id="pageInfo"></span>
     <button onclick="nextPage()">التالي</button>
-  </div>  <script>
+  </div>
+
+  <script>
     const selector = document.getElementById("bookSelector");
     const results = document.getElementById("results");
     const loading = document.getElementById("loading");
@@ -98,7 +106,7 @@
       results.innerHTML = "";
       loading.style.display = "block";
       pagination.style.display = "none";
-      fetch(`https://tamaa-pro.github.io/kotob_alhadith/${book}.json`)
+      fetch(`https://tamaa-pro.github.io/kotob_alhadith/hadiths_${book}.json`)
         .then(res => res.json())
         .then(data => {
           allHadiths = data;
@@ -109,7 +117,7 @@
         })
         .catch(() => {
           loading.style.display = "none";
-          results.innerHTML = '<p style="text-align:center;color:red">حدث خطأ أثناء تحميل الأحاديث</p>';
+          results.innerHTML = '<p style="text-align:center;color:red">⚠️ حدث خطأ أثناء تحميل الأحاديث</p>';
         });
     });
 
@@ -142,5 +150,6 @@
         renderPage();
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
