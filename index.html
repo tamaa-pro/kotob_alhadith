@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الأحاديث النبوية</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      padding: 20px;
+      user-select: none;
+    }
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    select {
+      font-size: 18px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin: 10px auto;
+      display: block;
+      width: 90%;
+      max-width: 500px;
+      background: #222;
+      color: #fff;
+    }
+    #results {
+      margin-top: 30px;
+      padding: 20px;
+      background: #1c1c1c;
+      border-radius: 10px;
+      line-height: 2;
+    }
+    .hadith {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #222;
+      border-left: 4px solid #3af;
+      border-radius: 8px;
+      user-select: text;
+    }
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 30px;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>الأحاديث النبوية</h1>
+  <select id="bookSelector">
+    <option value="">اختر كتابًا</option>
+    <option value="ara-bukhari">صحيح البخاري</option>
+    <option value="ara-muslim">صحيح مسلم</option>
+    <option value="ara-tirmidzi">سنن الترمذي</option>
+    <option value="ara-abu-daud">سنن أبي داود</option>
+    <option value="ara-nasai">سنن النسائي</option>
+    <option value="ara-ibnu-majah">سنن ابن ماجه</option>
+  </select>  <div class="loading" id="loading" style="display:none">
+    <p>📖 جاري تحميل الأحاديث فصبرٌ جميل...</p>
+  </div>  <div id="results"></div>
+  <div class="pagination" id="pagination" style="display:none">
+    <button onclick="prevPage()">السابق</button>
+    <span id="pageInfo"></span>
+    <button onclick="nextPage()">التالي</button>
+  </div>  <script>
+    const selector = document.getElementById("bookSelector");
+    const results = document.getElementById("results");
+    const loading = document.getElementById("loading");
+    const pagination = document.getElementById("pagination");
+    const pageInfo = document.getElementById("pageInfo");
+
+    let allHadiths = [];
+    let currentPage = 1;
+    const perPage = 20;
+
+    selector.addEventListener("change", () => {
+      const book = selector.value;
+      if (!book) return;
+      results.innerHTML = "";
+      loading.style.display = "block";
+      pagination.style.display = "none";
+      fetch(`https://tamaa-pro.github.io/kotob_alhadith/${book}.json`)
+        .then(res => res.json())
+        .then(data => {
+          allHadiths = data;
+          currentPage = 1;
+          loading.style.display = "none";
+          pagination.style.display = "block";
+          renderPage();
+        })
+        .catch(() => {
+          loading.style.display = "none";
+          results.innerHTML = '<p style="text-align:center;color:red">حدث خطأ أثناء تحميل الأحاديث</p>';
+        });
+    });
+
+    function renderPage() {
+      results.innerHTML = "";
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+      const pageHadiths = allHadiths.slice(start, end);
+
+      pageHadiths.forEach(h => {
+        const div = document.createElement("div");
+        div.className = "hadith";
+        div.textContent = h.arab;
+        results.appendChild(div);
+      });
+
+      pageInfo.textContent = `الصفحة ${currentPage} من ${Math.ceil(allHadiths.length / perPage)}`;
+    }
+
+    function nextPage() {
+      if (currentPage * perPage < allHadiths.length) {
+        currentPage++;
+        renderPage();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+      }
+    }
+  </script></body>
+</html>
